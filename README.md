@@ -51,3 +51,32 @@ If trimming NextSeq data, Run: sh /”absolute pathway for trim_galore_directory
 - When trimming is complete, check FastQC reports.
 
 ### 5. Alignment
+- In the data directory, create symbolic link for the reference genome file (ending in .fasta), index files (ending in .bt2), and annotation file (ending in .gtf) from arivera/viral_genomes/Rhesus_“ virus name ” using:
+ ln -s “absolute pathway where the fa and gtf files are”/”file name.fa or .gtf”
+- Copy slurm.tmpl, .BatchJobs.R, tophat.param and targets.txt files.nano tophat.param script. Make sure you are using the correct annotation file (ending in .gtf), and correct reference genome file (ending in .fa or .fasta).
+- Edit targets.txt as follows: nano targets.txt
+- Run R in the main directory where the alignment files are (targets.txt file, trim.param and etc.)
+- Follow the commands down below to complete the alignment
+```
+R
+library(systemPipeR)
+library(GenomicFeatures)
+targets <- read.delim("targets.txt", comment.char = "#")
+targets
+args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+moduleload(modules(args))
+sysargs(args[1])
+resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="20G") # note this assigns 1Gb of Ram per core. If ncpus is 4, then this will amount to 4Gb total
+reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01", resourceList=resources)
+waitForJobs(reg)
+
+Alignment typically takes 10 hours. In order to ensure that your sequences are being aligned:
+- use the command qstat | grep arivera
+- Jobs should be running (R)
+
+### 6. Alignment Statistics
+
+
+
+
+

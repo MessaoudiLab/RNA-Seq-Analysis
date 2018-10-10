@@ -197,11 +197,35 @@ plotPCA(vsd)
 dev.off()
 ```
 
-
-
-
-
-
+### 10. DEG Analysis with edgeR
+- Follow the commands down below to run DEG analysis:
+```
+library(edgeR)
+countDF <- read.delim("results/countDFeByg_OR_colon.txt
+", row.names=1, check.names=FALSE)
+targets <- read.delim("targetsORTC.txt", comment="#")
+cmp <- readComp(file="targetsORTC.txt", format="matrix", delim="-")
+edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=TRUE, mdsplot="")
+desc <- read.delim("/bigdata/messaoudilab/abotr002/References/Rhesus_Macaque/Rhesus_annotations.xls", row.names=1)
+edgeDF <- cbind(edgeDF, desc[rownames(edgeDF),])
+write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
+edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE)
+pdf("results/DEGcounts.pdf")
+DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=5))
+dev.off()
+write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
+```
+- Merge RPKM file (rpkmDFeByg.xls) and edgeR file (edgeRglm_allcomp.xls) (these files should be in the ‘results’ directory)
+- nano rpkmDFeByg.xls and write a header “ENSEMBL_ID” on top of ensembl column. R
+- nano edgeRglm_allcomp.xls and a header “RhesusEnsembl” on top of ensembl column.
+- Make sure you are in the ‘results’ directory when running the following in R
+- Follow the commands down below to merge the data in the two files to create ‘edgeR_rpkm.xls’
+```
+edgeR <- read.delim("edgeRglm_allcomp.xls", sep="\t", header=TRUE)
+rpkm <- read.delim("rpkmDFeByg.xls", sep="\t", header=TRUE)
+edgeR_rpkm <- merge(edgeR, rpkm, by.x="RhesusEnsembl", by.y="ENSEMBL_ID", all=TRUE)
+write.table(edgeR_rpkm, file="edgeR_rpkm_no_TC45768_noloc.xls", sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
+```
 
 
 

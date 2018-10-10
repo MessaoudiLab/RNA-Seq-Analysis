@@ -18,4 +18,22 @@ Next, transfer all data from the filtered Mastersheet to a different workbook ti
 Now, filter the Log FC value to ascending so that up and down regulated values are clearly distinguishable. On seperate workbooks, organize a column for Gene and for LogFC between all up regulated and down regulated genes for each timepoint.
 
 ## Functional Enrichment
-Functional Enrichment is used to cluster genes that are associated with specific biological pathways. Using the excel files (xls.) that were created with two columns listed as Gene and LogFC, upload each file on Metacore under Experiments w/Gene or Protein ID’s. After this is complete, go to Workflows and Reports and select Enrichment Analysis. This should produce Pathway Maps, Process Networks, Diseases (by Biomarkers) and GO Processes. Using GO Processes, we will be able to determine what biological pathways were crucial and potentially find genes associated with disease phenotypes.
+Functional Enrichment is used to cluster genes that are associated with specific biological pathways. 
+```
+1. Save an excel file with 2 columns (gene name and -logFC)
+2. Log on to MetaCore and select Experiments
+3. Select Andrea
+4. Upload excel file under upload
+5. Upload experiments with gene or protein ID's
+6. Upload file as .xls
+7. Next
+8. Homosapiens
+9. Select workflows and reports
+10. Enrichment analysis
+11. Next
+12. Set p-value to 0.05
+13. Apply
+14. Select top 100 genes for all
+15. Save workflow (end name of workflow with enrichment analysis)
+16. Get report
+```

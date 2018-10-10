@@ -76,6 +76,21 @@ Alignment typically takes 10 hours. In order to ensure that your sequences are b
 - Jobs should be running (R)
 
 ### 6. Alignment Statistics
+- To get alignment stats and counts faster, run a sub node using srun as shown below: srun  --mem=20gb --cpus-per-task 1 --ntasks 1 --time 10:00:00 --pty bash -l
+- Follow the commands down below to get alignment statistics
+```
+R
+library(systemPipeR)
+library(GenomicFeatures)
+targets <- read.delim("targets.txt", comment.char = "#")
+targets
+args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+file.exists(outpaths(args))
+read_statsDF <- alignStats(args=args)
+write.table(read_statsDF, file="results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
+```
+
+### 7. Counting
 
 
 

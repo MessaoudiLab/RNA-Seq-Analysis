@@ -92,6 +92,7 @@ write.table(read_statsDF, file="results/alignStats.xls", row.names=FALSE, quote=
 
 ### 7. Counting
 The .gtf file, .fa file, sqlite file and organism given down below are subject to change according to project. Include the appropriate files needed for your particular project.
+- Follow the commands down below for counting:
 ```
 library(GenomicFeatures)
 txdb <- makeTxDbFromGFF(file="data/Macaca_mulatta.MMUL_1.78.gtf", format="gtf", dataSource="ENSEMBL", organism="Macaca mulatta")
@@ -110,6 +111,65 @@ rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg
 write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
 ```
 A counts file and RPKM normalized expression values are now generated and can be found in the "results" directory. These counts are normalized to remove biases introduced in the preparation steps such as length of the reads and sequencing depth (coverage) of a sample. During RPKM normalization, The total number of reads in a sample is divided by 1,000,000 (this is "per million" factor). Read counts are divided by this per million factor (normalizing for coverage giving you reads per millions). Then, these reads per million values are divided by the length of the gene in kilobases. Because RPKM normalization involves total number of reads in each sample (not just the counts of each individual reads), you might see RPKM values different between different samples/time points. This RPKM normalization step is done separately from EdgeR, which generates FC, p-value and FDR. EdgeR does its own normalization. 
+
+### 8. Correlation Analysis
+- Folow the commands down below to compute the sample-wise Spearman correlation coefficients from the RPKM normalized expression values:
+```
+library(ape)
+rpkmDFeByg <- read.delim("./results/rpkmDFeByg.xls", row.names=1, check.names=FALSE)[,-19]
+rpkmDFeByg <- rpkmDFeByg[rowMeans(rpkmDFeByg) > 50,]
+d <- cor(rpkmDFeByg, method="spearman")
+hc <- hclust(as.dist(1-d))
+pdf("results/sample_tree.pdf")
+plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, no.margin=TRUE)
+dev.off()
+library(DESeq2)
+countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
+colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+d <- cor(assay(rlog(dds)), method="spearman")
+hc <- hclust(dist(1-d))
+pdf("results/sample_tree_rlog.pdf")
+plot.phylo(as.phylo(hc), type="p", edge.col=4, edge.width=3, show.node.label=TRUE, no.margin=TRUE)
+dev.off()
+```
+
+### 9. PCA Plots
+- Follow the commands down below to create group-wise and sample-wise PCA plots:
+```
+rld <- rlog(dds)
+pdf("results/PCA_group.pdf")
+plotPCA(rld)
+dev.off()
+colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+rld <- rlog(dds)
+pdf("results/PCA_sample.pdf")
+plotPCA(rld)
+dev.off()
+```
+- Follow the commands down below to create group-wise and sample-wise PCA plots based on vsd:
+```
+colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+vsd <- varianceStabilizingTransformation(dds)
+pdf("results/PCA_group_vsd.pdf")
+plotPCA(vsd)
+dev.off()
+colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+vsd <- varianceStabilizingTransformation(dds)
+pdf("results/PCA_sample_vsd.pdf")
+plotPCA(vsd)
+dev.off()
+```
+
+
+
+
+
+
+
 
 
 

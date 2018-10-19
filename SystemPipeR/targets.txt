@@ -1,1 +1,14 @@
-
+#<CMP> CMPset1:d3-d0,d6-d0,d10-d0
+FileName        SampleName	Factor  SampleLong	Experiment	Date
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141132_d0.read1_trimmed.fq.gz	VP35.HD.141132.d0	d0	VP35.HD.141132.d0	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141132_d10.read1_trimmed.fq.gz     VP35.HD.141132.d10	d10     VP35.HD.141132.d10	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141132_d3.read1_trimmed.fq.gz	VP35.HD.141132.d3	d3	VP35.HD.141132.d3	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141132_d6.read1_trimmed.fq.gz	VP35.HD.141132.d6	d6	VP35.HD.141132.d6	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141389_d0.read1_trimmed.fq.gz	VP35.HD.141389.d0	d0	VP35.HD.141389.d0	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141389_d10.read1_trimmed.fq.gz     VP35.HD.141389.d10	d10     VP35.HD.141389.d10	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141389_d3_2.read1_trimmed.fq.gz    VP35.HD.141389.d3	d3	VP35.HD.141389.d3	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141389_d6.read1_trimmed.fq.gz	VP35.HD.141389.d6	d6	VP35.HD.141389.d6	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141409_d0_2.read1_trimmed.fq.gz    VP35.HD.141409.d0	d0	VP35.HD.141409.d0	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141409_d10_2.read1_trimmed.fq.gz   VP35.HD.141409.d10	d10     VP35.HD.141409.d10	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141409_d3.read1_trimmed.fq.gz	VP35.HD.141409.d3	d3	VP35.HD.141409.d3	1	Jun-25-18
+/bigdata/messaoudilab/arivera/EBOV/U19/VP35/PFU_1000/PBMC/challenge/data/trimmed_reseq_combined/VP35_challenege_PBMC_141409_d6.read1_trimmed.fq.gz	VP35.HD.141409.d6	d6	VP35.HD.141409.d6	1	Jun-25-18

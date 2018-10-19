@@ -88,18 +88,30 @@ qstat | grep “username” (if done, nothing will show)
  ln -s “absolute pathway where the fa and gtf files are”/”file name.fa or .gtf”
 - Copy slurm.tmpl, .BatchJobs.R, tophat.param and targets.txt files.nano tophat.param script. Make sure you are using the correct annotation file (ending in .gtf), and correct reference genome file (ending in .fa or .fasta).
 - Edit targets.txt as follows: nano targets.txt
-- Run R in the main directory where the alignment files are (targets.txt file, trim.param and etc.)
-- Follow the commands down below to complete the alignment
+- Run R in the main directory where the alignment files are (targets.txt file, tophat.param and etc.)
+- Load the required packages
 ```
 R
 library(systemPipeR)
 library(GenomicFeatures)
+```
+- Name and read in the targets file
+```
 targets <- read.delim("targets.txt", comment.char = "#")
 targets
+```
+- Create object in order to run alignment
+```
 args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
 moduleload(modules(args))
 sysargs(args[1])
+```
+- Allocate the desired resources for alignment
+```
 resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="20G") # note this assigns 1Gb of Ram per core. If ncpus is   4, then this will amount to 4Gb total
+```
+- Submit the jobs to the cluster for alignment to take place
+```
 reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01", resourceList=resources)
 waitForJobs(reg)
 ```

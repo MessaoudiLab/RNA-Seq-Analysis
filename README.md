@@ -147,7 +147,7 @@ read_statsDF <- alignStats(args=args)
 write.table(read_statsDF, file="results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 ```
 
-### 7. Counting
+### 7. Counting and Normalization
 The .gtf file, .fa file, sqlite file and organism given down below are subject to change according to project. Include the appropriate files needed for your particular project.
 - Load the required packages
 ```

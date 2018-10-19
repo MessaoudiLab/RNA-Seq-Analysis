@@ -72,7 +72,7 @@ Alignment typically takes 10 hours. In order to ensure that your sequences are b
 - use the command qstat | grep arivera
 - Jobs should be running (R)
 
-- To get alignment stats and counts faster, run a sub node using srun
+In order to quickly obtain the alignment statistics and counts, run a sub node using srun
 ```
 srun  --mem=20gb --cpus-per-task 1 --ntasks 1 --time 10:00:00 --pty bash -l
 ```

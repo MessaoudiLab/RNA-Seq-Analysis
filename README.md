@@ -91,17 +91,17 @@ qstat | grep “username” (if done, nothing will show)
 - Run R in the main directory where the alignment files are (targets.txt file, trim.param and etc.)
 - Follow the commands down below to complete the alignment
 ```
-1. R
-2. library(systemPipeR)
-3. library(GenomicFeatures)
-4. targets <- read.delim("targets.txt", comment.char = "#")
-5. targets
-6. args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
-7. moduleload(modules(args))
-8. sysargs(args[1])
-9. resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="20G") # note this assigns 1Gb of Ram per core. If ncpus is   4, then this will amount to 4Gb total
-10. reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01", resourceList=resources)
-11. waitForJobs(reg)
+R
+library(systemPipeR)
+library(GenomicFeatures)
+targets <- read.delim("targets.txt", comment.char = "#")
+targets
+args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+moduleload(modules(args))
+sysargs(args[1])
+resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="20G") # note this assigns 1Gb of Ram per core. If ncpus is   4, then this will amount to 4Gb total
+reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01", resourceList=resources)
+waitForJobs(reg)
 ```
 
 Alignment typically takes 10 hours. In order to ensure that your sequences are being aligned:
@@ -112,108 +112,108 @@ Alignment typically takes 10 hours. In order to ensure that your sequences are b
 - To get alignment stats and counts faster, run a sub node using srun as shown below: srun  --mem=20gb --cpus-per-task 1 --ntasks 1 --time 10:00:00 --pty bash -l
 - Follow the commands down below to get alignment statistics
 ```
-1. R
-2. library(systemPipeR)
-3. library(GenomicFeatures)
-4. targets <- read.delim("targets.txt", comment.char = "#")
-5. targets
-6. args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
-7. file.exists(outpaths(args))
-8. read_statsDF <- alignStats(args=args)
-9. write.table(read_statsDF, file="results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
+R
+library(systemPipeR)
+library(GenomicFeatures)
+targets <- read.delim("targets.txt", comment.char = "#")
+targets
+args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+file.exists(outpaths(args))
+read_statsDF <- alignStats(args=args)
+write.table(read_statsDF, file="results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 ```
 
 ### 7. Counting
 The .gtf file, .fa file, sqlite file and organism given down below are subject to change according to project. Include the appropriate files needed for your particular project.
 - Follow the commands down below for counting:
 ```
-1. library(GenomicFeatures)
-2. txdb <- makeTxDbFromGFF(file="data/Macaca_mulatta.MMUL_1.78.gtf", format="gtf", dataSource="ENSEMBL", organism="Macaca mulatta")
-3. saveDb(txdb, file="./data/Macaca_mulatta.sqlite")
-4. library("GenomicFeatures"); library(BiocParallel)
-5. txdb <- loadDb("./data/Macaca_mulatta.sqlite")
-6. eByg <- exonsBy(txdb, by=c("gene"))
-7. bfl <- BamFileList(outpaths(args), yieldSize=50000, index=character())
-8. multicoreParam <- MulticoreParam(workers=8); register(multicoreParam); registered()
-9. counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode="Union", ignore.strand=FALSE, inter.feature=TRUE, singleEnd=TRUE))
-10. countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
-11. countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
-12. rownames(countDFeByg) <- names(rowRanges(counteByg[[1]])); colnames(countDFeByg) <- names(outpaths(args))
-13. write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
-14. rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
-15. write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
+library(GenomicFeatures)
+txdb <- makeTxDbFromGFF(file="data/Macaca_mulatta.MMUL_1.78.gtf", format="gtf", dataSource="ENSEMBL", organism="Macaca mulatta")
+saveDb(txdb, file="./data/Macaca_mulatta.sqlite")
+library("GenomicFeatures"); library(BiocParallel)
+txdb <- loadDb("./data/Macaca_mulatta.sqlite")
+eByg <- exonsBy(txdb, by=c("gene"))
+bfl <- BamFileList(outpaths(args), yieldSize=50000, index=character())
+multicoreParam <- MulticoreParam(workers=8); register(multicoreParam); registered()
+counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode="Union", ignore.strand=FALSE, inter.feature=TRUE, singleEnd=TRUE))
+countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
+countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
+rownames(countDFeByg) <- names(rowRanges(counteByg[[1]])); colnames(countDFeByg) <- names(outpaths(args))
+write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
+rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
+write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
 ```
 A counts file and RPKM normalized expression values are now generated and can be found in the "results" directory. These counts are normalized to remove biases introduced in the preparation steps such as length of the reads and sequencing depth (coverage) of a sample. During RPKM normalization, The total number of reads in a sample is divided by 1,000,000 (this is "per million" factor). Read counts are divided by this per million factor (normalizing for coverage giving you reads per millions). Then, these reads per million values are divided by the length of the gene in kilobases. Because RPKM normalization involves total number of reads in each sample (not just the counts of each individual reads), you might see RPKM values different between different samples/time points. This RPKM normalization step is done separately from EdgeR, which generates FC, p-value and FDR. EdgeR does its own normalization. 
 
 ### 8. Correlation Analysis
 - Folow the commands down below to compute the sample-wise Spearman correlation coefficients from the RPKM normalized expression values:
 ```
-1. library(ape)
-2. rpkmDFeByg <- read.delim("./results/rpkmDFeByg.xls", row.names=1, check.names=FALSE)[,-19]
-3. rpkmDFeByg <- rpkmDFeByg[rowMeans(rpkmDFeByg) > 50,]
-4. d <- cor(rpkmDFeByg, method="spearman")
-5. hc <- hclust(as.dist(1-d))
-6. pdf("results/sample_tree.pdf")
-7. plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, no.margin=TRUE)
-8. dev.off()
-9. library(DESeq2)
-10. countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
-11. colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
-12. dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
-13. d <- cor(assay(rlog(dds)), method="spearman")
-14. hc <- hclust(dist(1-d))
-15. pdf("results/sample_tree_rlog.pdf")
-16. plot.phylo(as.phylo(hc), type="p", edge.col=4, edge.width=3, show.node.label=TRUE, no.margin=TRUE)
-17. dev.off()
+library(ape)
+rpkmDFeByg <- read.delim("./results/rpkmDFeByg.xls", row.names=1, check.names=FALSE)[,-19]
+rpkmDFeByg <- rpkmDFeByg[rowMeans(rpkmDFeByg) > 50,]
+d <- cor(rpkmDFeByg, method="spearman")
+hc <- hclust(as.dist(1-d))
+pdf("results/sample_tree.pdf")
+plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, no.margin=TRUE)
+dev.off()
+library(DESeq2)
+countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
+colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+d <- cor(assay(rlog(dds)), method="spearman")
+hc <- hclust(dist(1-d))
+pdf("results/sample_tree_rlog.pdf")
+plot.phylo(as.phylo(hc), type="p", edge.col=4, edge.width=3, show.node.label=TRUE, no.margin=TRUE)
+dev.off()
 ```
 
 ### 9. PCA Plots
 - Follow the commands down below to create group-wise and sample-wise PCA plots:
 ```
-1. rld <- rlog(dds)
-2. pdf("results/PCA_group.pdf")
-3. plotPCA(rld)
-4. dev.off()
-5. colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
-6. dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
-7. rld <- rlog(dds)
-8. pdf("results/PCA_sample.pdf")
-9. plotPCA(rld)
-10. dev.off()
+rld <- rlog(dds)
+pdf("results/PCA_group.pdf")
+plotPCA(rld)
+dev.off()
+colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+rld <- rlog(dds)
+pdf("results/PCA_sample.pdf")
+plotPCA(rld)
+dev.off()
 ```
 - Follow the commands down below to create group-wise and sample-wise PCA plots based on vsd:
 ```
-1. colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
-2. dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
-3. vsd <- varianceStabilizingTransformation(dds)
-4. pdf("results/PCA_group_vsd.pdf")
-5. plotPCA(vsd)
-6. dev.off()
-7. colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
-8. dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
-9. vsd <- varianceStabilizingTransformation(dds)
-10. pdf("results/PCA_sample_vsd.pdf")
-11. plotPCA(vsd)
-12. dev.off()
+colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+vsd <- varianceStabilizingTransformation(dds)
+pdf("results/PCA_group_vsd.pdf")
+plotPCA(vsd)
+dev.off()
+colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+vsd <- varianceStabilizingTransformation(dds)
+pdf("results/PCA_sample_vsd.pdf")
+plotPCA(vsd)
+dev.off()
 ```
 
 ### 10. DEG Analysis with edgeR
 - Follow the commands down below to run DEG analysis:
 ```
-1. library(edgeR)
-2. countDF <- read.delim("results/countDFeByg_OR_colon.txt
-3. ", row.names=1, check.names=FALSE)
-4. targets <- read.delim("targetsORTC.txt", comment="#")
-5. cmp <- readComp(file="targetsORTC.txt", format="matrix", delim="-")
-6. edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=TRUE, mdsplot="")
-7. desc <- read.delim("/bigdata/messaoudilab/abotr002/References/Rhesus_Macaque/Rhesus_annotations.xls", row.names=1)
-8. edgeDF <- cbind(edgeDF, desc[rownames(edgeDF),])
-9. write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
-10. edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE)
-11. pdf("results/DEGcounts.pdf")
-12. DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=5))
-13. dev.off()
-14. write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
+library(edgeR)
+countDF <- read.delim("results/countDFeByg_OR_colon.txt
+", row.names=1, check.names=FALSE)
+targets <- read.delim("targetsORTC.txt", comment="#")
+cmp <- readComp(file="targetsORTC.txt", format="matrix", delim="-")
+edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=TRUE, mdsplot="")
+desc <- read.delim("/bigdata/messaoudilab/abotr002/References/Rhesus_Macaque/Rhesus_annotations.xls", row.names=1)
+edgeDF <- cbind(edgeDF, desc[rownames(edgeDF),])
+write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
+edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE)
+pdf("results/DEGcounts.pdf")
+DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=5))
+dev.off()
+write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
 ```
 - Merge RPKM file (rpkmDFeByg.xls) and edgeR file (edgeRglm_allcomp.xls) (these files should be in the ‘results’ directory)
 - nano rpkmDFeByg.xls and write a header “ENSEMBL_ID” on top of ensembl column. R
@@ -221,10 +221,10 @@ A counts file and RPKM normalized expression values are now generated and can be
 - Make sure you are in the ‘results’ directory when running the following in R
 - Follow the commands down below to merge the data in the two files to create ‘edgeR_rpkm.xls’
 ```
-1. edgeR <- read.delim("edgeRglm_allcomp.xls", sep="\t", header=TRUE)
-2. rpkm <- read.delim("rpkmDFeByg.xls", sep="\t", header=TRUE)
-3. edgeR_rpkm <- merge(edgeR, rpkm, by.x="RhesusEnsembl", by.y="ENSEMBL_ID", all=TRUE)
-4. write.table(edgeR_rpkm, file="edgeR_rpkm_no_TC45768_noloc.xls", sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
+edgeR <- read.delim("edgeRglm_allcomp.xls", sep="\t", header=TRUE)
+rpkm <- read.delim("rpkmDFeByg.xls", sep="\t", header=TRUE)
+edgeR_rpkm <- merge(edgeR, rpkm, by.x="RhesusEnsembl", by.y="ENSEMBL_ID", all=TRUE)
+write.table(edgeR_rpkm, file="edgeR_rpkm_no_TC45768_noloc.xls", sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
 ```
 
 

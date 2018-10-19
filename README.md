@@ -25,7 +25,7 @@ mkdir results
 
 In addition to the data and results directories, it is important for most projects to include parameters such as slurm.tmpl, targets.txt, and tophat.param. Include these under the parent directory by copying the parameters from another lab member. Note:To open parameter files, use the command nano. Ex:  nano slurm.tmpl or nano targets.txt
 
-### 2. Transferring Data to Terminal
+### 2. Downloading Data on Terminal
 Libraries are sequenced through the website http://illumina.bioinfo.ucr.edu/ht/
 
 - Once in the parent directory, change directories to the sub-directory “data” 
@@ -265,15 +265,3 @@ rpkm <- read.delim("rpkmDFeByg.xls", sep="\t", header=TRUE)
 edgeR_rpkm <- merge(edgeR, rpkm, by.x="RhesusEnsembl", by.y="ENSEMBL_ID", all=TRUE)
 write.table(edgeR_rpkm, file="edgeR_rpkm_no_TC45768_noloc.xls", sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
 ```
-
-
-
-
-
-
-
-
-
-
-
-

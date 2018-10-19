@@ -121,27 +121,45 @@ Alignment typically takes 10 hours. In order to ensure that your sequences are b
 - Jobs should be running (R)
 
 ### 6. Alignment Statistics
-- To get alignment stats and counts faster, run a sub node using srun as shown below: srun  --mem=20gb --cpus-per-task 1 --ntasks 1 --time 10:00:00 --pty bash -l
-- Follow the commands down below to get alignment statistics
+- To get alignment stats and counts faster, run a sub node using srun
+```
+srun  --mem=20gb --cpus-per-task 1 --ntasks 1 --time 10:00:00 --pty bash -l
+```
+- Load the required packages 
 ```
 R
 library(systemPipeR)
 library(GenomicFeatures)
+```
+- Read in targets file once again
+```
 targets <- read.delim("targets.txt", comment.char = "#")
 targets
+```
+- Create an object
+```
 args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
 file.exists(outpaths(args))
+```
+- Write the table for alignment stats
+```
 read_statsDF <- alignStats(args=args)
 write.table(read_statsDF, file="results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 ```
 
 ### 7. Counting
 The .gtf file, .fa file, sqlite file and organism given down below are subject to change according to project. Include the appropriate files needed for your particular project.
-- Follow the commands down below for counting:
+- Load the required packages
 ```
 library(GenomicFeatures)
+```
+- Create a txdb object
+```
 txdb <- makeTxDbFromGFF(file="data/Macaca_mulatta.MMUL_1.78.gtf", format="gtf", dataSource="ENSEMBL", organism="Macaca mulatta")
 saveDb(txdb, file="./data/Macaca_mulatta.sqlite")
+```
+- The following performs read counting with summarizeOverlaps in parallel mode with multiple cores
+```
 library("GenomicFeatures"); library(BiocParallel)
 txdb <- loadDb("./data/Macaca_mulatta.sqlite")
 eByg <- exonsBy(txdb, by=c("gene"))
@@ -149,16 +167,22 @@ bfl <- BamFileList(outpaths(args), yieldSize=50000, index=character())
 multicoreParam <- MulticoreParam(workers=8); register(multicoreParam); registered()
 counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode="Union", ignore.strand=FALSE, inter.feature=TRUE, singleEnd=TRUE))
 countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
+```
+- Wait until read counting is done, then run to make countDFeByg excel file
+```
 countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
 rownames(countDFeByg) <- names(rowRanges(counteByg[[1]])); colnames(countDFeByg) <- names(outpaths(args))
 write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
+```
+- Generates RPKM normalized expression values from the countDFeByg file
+```
 rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
 write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
 ```
 A counts file and RPKM normalized expression values are now generated and can be found in the "results" directory. These counts are normalized to remove biases introduced in the preparation steps such as length of the reads and sequencing depth (coverage) of a sample. During RPKM normalization, The total number of reads in a sample is divided by 1,000,000 (this is "per million" factor). Read counts are divided by this per million factor (normalizing for coverage giving you reads per millions). Then, these reads per million values are divided by the length of the gene in kilobases. Because RPKM normalization involves total number of reads in each sample (not just the counts of each individual reads), you might see RPKM values different between different samples/time points. This RPKM normalization step is done separately from EdgeR, which generates FC, p-value and FDR. EdgeR does its own normalization. 
 
 ### 8. Correlation Analysis
-- Folow the commands down below to compute the sample-wise Spearman correlation coefficients from the RPKM normalized expression values:
+- The following computes the sample-wise Spearman correlation coefficients from the RPKM normalized expression values. 
 ```
 library(ape)
 rpkmDFeByg <- read.delim("./results/rpkmDFeByg.xls", row.names=1, check.names=FALSE)[,-19]
@@ -168,6 +192,9 @@ hc <- hclust(as.dist(1-d))
 pdf("results/sample_tree.pdf")
 plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, no.margin=TRUE)
 dev.off()
+```
+- The following computes the sample-wise Spearman correlation coefficients from the rlog (regularized-logarithm) transformed expression values generated with the DESeq2 package to make correlation dendrogram of samples for rlog values.
+```
 library(DESeq2)
 countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
 colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)

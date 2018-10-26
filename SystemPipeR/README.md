@@ -190,10 +190,9 @@ dev.off()
 - Follow the commands down below to run DEG analysis:
 ```
 library(edgeR)
-countDF <- read.delim("results/countDFeByg_OR_colon.txt
-", row.names=1, check.names=FALSE)
-targets <- read.delim("targetsORTC.txt", comment="#")
-cmp <- readComp(file="targetsORTC.txt", format="matrix", delim="-")
+countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE)
+targets <- read.delim("targets.txt", comment="#")
+cmp <- readComp(file="targets.txt", format="matrix", delim="-")
 edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=TRUE, mdsplot="")
 desc <- read.delim("/bigdata/messaoudilab/abotr002/References/Rhesus_Macaque/Rhesus_annotations.xls", row.names=1)
 edgeDF <- cbind(edgeDF, desc[rownames(edgeDF),])

@@ -59,13 +59,12 @@ moduleload(modules(args))
 sysargs(args[1])
 ```
 - Allocate the desired resources for alignment
+Note this assigns 1Gb of Ram per core. If ncpus is   4, then this will amount to 4Gb total
 ```
-resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="20G") # note this assigns 1Gb of Ram per core. If ncpus is   4, then this will amount to 4Gb total
-```
+resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="20G") 
 - Submit the jobs to the cluster for alignment to take place
 ```
 reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01", resourceList=resources)
-waitForJobs(reg)
 ```
 
 Alignment typically takes 10 hours. In order to ensure that your sequences are being aligned:

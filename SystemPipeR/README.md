@@ -214,5 +214,5 @@ write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", 
 edgeR <- read.delim("edgeRglm_allcomp.xls", sep="\t", header=TRUE)
 rpkm <- read.delim("rpkmDFeByg.xls", sep="\t", header=TRUE)
 edgeR_rpkm <- merge(edgeR, rpkm, by.x="RhesusEnsembl", by.y="ENSEMBL_ID", all=TRUE)
-write.table(edgeR_rpkm, file="edgeR_rpkm_no_TC45768_noloc.xls", sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
+write.table(edgeR_rpkm, file="edgeR_rpkm.xls", sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
 ```

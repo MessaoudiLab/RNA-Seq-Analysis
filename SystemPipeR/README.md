@@ -206,8 +206,8 @@ dev.off()
 write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
 ```
 - Merge RPKM file (rpkmDFeByg.xls) and edgeR file (edgeRglm_allcomp.xls) (these files should be in the ‘results’ directory)
-- nano rpkmDFeByg.xls and write a header “ENSEMBL_ID” on top of ensembl column. R
-- nano edgeRglm_allcomp.xls and a header “RhesusEnsembl” on top of ensembl column.
+- nano rpkmDFeByg.xls and write a header “ENSEMBL_ID” on top of ensembl column. (Header is subject to change depending on project)
+- nano edgeRglm_allcomp.xls and a header “RhesusEnsembl” on top of ensembl column. (Header is subject to change depending on project)
 - Make sure you are in the ‘results’ directory when running the following in R
 - Follow the commands down below to merge the data in the two files to create ‘edgeR_rpkm.xls’
 ```

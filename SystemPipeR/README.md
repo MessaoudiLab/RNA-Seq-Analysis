@@ -191,6 +191,7 @@ dev.off()
 ### 7. DEG Analysis with edgeR
 - Follow the commands down below to run DEG analysis:
 ```
+library(systemPipeR)
 library(edgeR)
 countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE)
 targets <- read.delim("targets.txt", comment="#")

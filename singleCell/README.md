@@ -2,7 +2,7 @@
 # Trim
 Trim paired end reads with TrimGalore
 
-Modify TrimGalorePE.sh as needed
+Make sure to cutomize TrimGalorePE.sh (i.e. output file name ".stdout", email, jobname, directory, file name, trimming parameters)
 
 ```
 sbatch TrimGalorePE.sh

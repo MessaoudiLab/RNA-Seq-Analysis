@@ -51,7 +51,7 @@ fls <- dir(".",".out.bam")
 ```
 Run featureCounts
 ```
-counts <- featureCounts(files=fls, annot.ext="/bigdata/messaoudilab/arivera/viral_genomes/Rhesus_SVV/Macaca_mulatta_SVV.gtf", isGTFAnnotationFile=TRUE, GTF.featureType="exon", GTF.attrType="gene_id")
+counts <- featureCounts(files=fls, annot.ext="/bigdata/messaoudilab/arivera/Reference_genomes/Rhesus_SVV/Macaca_mulatta_SVV.gtf", isGTFAnnotationFile=TRUE, GTF.featureType="exon", GTF.attrType="gene_id", isPairedEnd=TRUE, requireBothEndsMapped=TRUE)
 ```
 Add descriptions (i.e. hgnc symbols)
 ```

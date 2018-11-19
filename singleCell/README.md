@@ -53,14 +53,13 @@ Run featureCounts
 ```
 counts <- featureCounts(files=fls, annot.ext="/bigdata/messaoudilab/arivera/viral_genomes/Rhesus_SVV/Macaca_mulatta_SVV.gtf", isGTFAnnotationFile=TRUE, GTF.featureType="exon", GTF.attrType="gene_id")
 ```
-Write excel file
-```
-write.table(counts$counts, file="Counts.xls", sep="\t", row.names=TRUE, quote=FALSE)
-```
 Add descriptions (i.e. hgnc symbols)
 ```
 desc <- read.delim("/bigdata/messaoudilab/arivera/Reference_Macaque/Rhesus_annotations.xls", row.names=1)
 counts2 <- counts$counts
 counts2 <- cbind(counts2, desc[rownames(counts2),])
+```
+Write excel file
+```
 write.table(counts2, file="Counts_gene.xls", quote=FALSE, sep="\t")
 ```

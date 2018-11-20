@@ -1,17 +1,17 @@
 # RNA-Seq Analysis Protocol
 ## Basic Commands
 
-### ls: list
-### cd: change directory
-### mkdir: make directory
-### cd ../: go back one directory
-### pwd: present working directory
-### cp: copy
-### wget {url}: download data from internet
+ls: list
+cd: change directory
+mkdir: make directory
+cd ../: go back one directory
+pwd: present working directory
+cp: copy
+wget {url}: download data from internet
 
 
 
-### 1. Setup working directory for RNAseq
+## 1. Setup working directory for RNAseq
 - Open the Terminal and Login to UCR cluster
 - Make a main for the project
 ```
@@ -33,9 +33,13 @@ In addition to the data and results directories, you'll need the following files
 
 To write/edit any of these files, use text editor nano (i.e. nano targets.txt) 
 
-### 2. FASTQC
-Run FASTQC on all samples. Information on how to run FASTQC can be found in the 
-### 3. Alignment
+## 2. FASTQC
+Run FASTQC on all fastq files. Information on how to run FASTQC can be found in the repository "NGS-Pre-Processing"
+
+## 3. Trim files
+Based on FASTQC metrics, Trim fastq files using Trim galore. Information on how to run Trim galore can be found in repository "NGS-Pre-Processing"
+
+## 3. Alignment
 - In the data directory, create symbolic link for the reference genome file, annotation file and index file. You should have 8 files: fasta, GTF, and 6 index files ending in .bt2 if using bowtie alignment.
 ```
 ln -s absolute/path/to/reference/genome/files .

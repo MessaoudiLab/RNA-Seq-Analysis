@@ -1,7 +1,7 @@
 # RNA-Seq Analysis Protocol
-## Basic Commands
+## Basic linux Commands
 
-ls: list
+ls: list files in current directory
 
 cd: change directory
 
@@ -9,7 +9,7 @@ mkdir: make directory
 
 cd ../: go back one directory
 
-pwd: present working directory
+pwd -P: absolute path of present working directory
 
 cp: copy
 

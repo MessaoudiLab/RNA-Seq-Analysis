@@ -50,6 +50,7 @@ Based on FASTQC metrics, Trim fastq files using Trim galore. Information on how 
 ```
 ln -s absolute/path/to/reference/genome/files .
 ```
+
 - Start R in the main directory 
 - Load the required packages
 ```
@@ -57,6 +58,7 @@ R
 library(systemPipeR)
 library(GenomicFeatures)
 ```
+
 - Read in the targets file and save it as object "targets"
 ```
 targets <- read.delim("targets.txt", comment.char = "#")
@@ -68,19 +70,17 @@ targets
 args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
 moduleload(modules(args))
 ```
-Check alignment script for the first sequence
+- Check alignment script for the first sequence
 ```
 sysargs(args[1])
 ```
 - Allocate the desired resources for alignment
 - Note this assigns 20GB of memory and will run for max 20 hours
-
 ```
 resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="20G") 
 ```
 - Submit the jobs to the cluster for alignment to take place
 - Change Njobs to actual number of sequences to be aligned
-
 ```
 reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01", resourceList=resources)
 ```
@@ -96,12 +96,14 @@ qstat | grep "username"
 ```
 - Alignment is complete once jobs are cleared from the queue and tophat directories exist in the results directory
 
-After alignment is complete, next 
-In order to quickly obtain the alignment statistics and counts, run a sub node using srun
+After alignment is complete, obtain alignment summary using readstats
+* For all remaining steps, enter a highmem subnode
+
 ```
-srun  --mem=20gb --cpus-per-task 1 --ntasks 1 --time 10:00:00 --pty bash -l
+srun -p highmem --mem=100g --time=24:00:00 --pty bash -l
 ```
-- Load the required packages 
+
+Start R in the main directory and Load the required packages again
 ```
 R
 library(systemPipeR)

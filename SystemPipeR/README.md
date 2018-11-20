@@ -2,11 +2,17 @@
 ## Basic Commands
 
 ls: list
+
 cd: change directory
+
 mkdir: make directory
+
 cd ../: go back one directory
+
 pwd: present working directory
+
 cp: copy
+
 wget {url}: download data from internet
 
 

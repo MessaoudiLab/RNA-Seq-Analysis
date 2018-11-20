@@ -7,73 +7,86 @@
 ### cd ../: go back one directory
 ### pwd: present working directory
 ### cp: copy
-### wget: retrieves information from internet
+### wget {url}: download data from internet
 
 
 
-### 1. Making Directories
-- Open the Terminal and Login
-- Make a parent directory for the project
+### 1. Setup working directory for RNAseq
+- Open the Terminal and Login to UCR cluster
+- Make a main for the project
 ```
 mkdir “name of project”
 ```
-- Create 2 sub-directories under the parent directory titled “data” and “results”
+- Create 2 sub-directories under the main directory titled “data” and “results”
 ```
 mkdir data
 mkdir results
 ```
 
-In addition to the data and results directories, it is important for most projects to include parameters such as slurm.tmpl, targets.txt, and tophat.param. Include these under the parent directory by copying the parameters from another lab member. Note:To open parameter files, use the command nano. Ex:  nano slurm.tmpl or nano targets.txt
+In addition to the data and results directories, you'll need the following files in the main directory: slurm.tmpl, .Batchjobs.R, tophat.param, and targets.txt (see examples)
 
-### 2. Generate required files
-- Files needed are listed down below:
-```
-targets.txt
-slurm.tmpl
-tophat.param
-.BatchJobs.R
-```
-- Examples of these files can be found in the SystemPipeR folder
+- .Batchjobs and slurm.tmpl are required for submitting jobs to the cluster. Copy these files exactly
 
+- tophat.param is required for defining alignment parameters. Change GTF and FASTA reference genome information in this file. Everything else will be the same
+
+- targets.file outlines the experimental design. See example as a guideline. $Filename lists the absolute pathway to fastq file, $SampleName is a name given to each fastq file and must be unique, $Factor is the experimental condition (i.e. STIM, baseline, day0, etc). <CMP> defines the comparisons you want to make - for example, DPI7-DPI0 will give differentially expressed genes at condition DPI7 relative to DPI0
+
+To write/edit any of these files, use text editor nano (i.e. nano targets.txt) 
+
+### 2. FASTQC
+Run FASTQC on all samples. Information on how to run FASTQC can be found in the 
 ### 3. Alignment
-- In the data directory, create symbolic link for the reference genome file (ending in .fasta), index files (ending in .bt2), and annotation file (ending in .gtf) from arivera/viral_genomes/Rhesus_“ virus name ” using:
- ln -s “absolute pathway where the fa and gtf files are”/”file name.fa or .gtf”
-- Copy slurm.tmpl, .BatchJobs.R, tophat.param and targets.txt files.nano tophat.param script. Make sure you are using the correct annotation file (ending in .gtf), and correct reference genome file (ending in .fa or .fasta).
-- Edit targets.txt as follows: nano targets.txt
-- Run R in the main directory where the alignment files are (targets.txt file, tophat.param and etc.)
+- In the data directory, create symbolic link for the reference genome file, annotation file and index file. You should have 8 files: fasta, GTF, and 6 index files ending in .bt2 if using bowtie alignment.
+```
+ln -s absolute/path/to/reference/genome/files .
+```
+- Start R in the main directory 
 - Load the required packages
 ```
 R
 library(systemPipeR)
 library(GenomicFeatures)
 ```
-- Name and read in the targets file
+- Read in the targets file and save it as object "targets"
 ```
 targets <- read.delim("targets.txt", comment.char = "#")
 targets
 ```
-- Create object in order to run alignment
+
+- Create "args" object, which saves information from tophat.param and targets.txt in order to run alignment
 ```
 args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
 moduleload(modules(args))
+```
+Check alignment script for the first sequence
+```
 sysargs(args[1])
 ```
 - Allocate the desired resources for alignment
-- Note this assigns 1Gb of Ram per core. If ncpus is   4, then this will amount to 4Gb total
+- Note this assigns 20GB of memory and will run for max 20 hours
 
 ```
 resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="20G") 
 ```
 - Submit the jobs to the cluster for alignment to take place
+- Change Njobs to actual number of sequences to be aligned
 
 ```
 reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01", resourceList=resources)
 ```
 
-Alignment typically takes 10 hours. In order to ensure that your sequences are being aligned:
-- use the command qstat | grep arivera
-- Jobs should be running (R)
+Alignment typically takes ~6 hours and is usually run overnight. In order to monitor your alignment:
+- quit R
+```
+q()
+```
+- In the linux environment use qstat
+```
+qstat | grep "username"
+```
+- Alignment is complete once jobs are cleared from the queue and tophat directories exist in the results directory
 
+After alignment is complete, next 
 In order to quickly obtain the alignment statistics and counts, run a sub node using srun
 ```
 srun  --mem=20gb --cpus-per-task 1 --ntasks 1 --time 10:00:00 --pty bash -l

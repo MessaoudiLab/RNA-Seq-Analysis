@@ -45,7 +45,7 @@ Run FASTQC on all fastq files. Information on how to run FASTQC can be found in 
 ## 3. Trim files
 Based on FASTQC metrics, Trim fastq files using Trim galore. Information on how to run Trim galore can be found in repository "NGS-Pre-Processing"
 
-## 3. Alignment
+## 4. Alignment
 - In the data directory, create symbolic link for the reference genome file, annotation file and index file. You should have 8 files: fasta, GTF, and 6 index files ending in .bt2 if using bowtie alignment.
 ```
 ln -s absolute/path/to/reference/genome/files .

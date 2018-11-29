@@ -72,10 +72,10 @@ In addition to the data and results directories, you'll need the following files
 - "tophat.param" is required for defining alignment parameters. Change the GTF and FASTA reference genome information in this file (line 8 and 14, respectively). Everything else will be the same
 
 - targets.file outlines the experimental design. See example as a guideline. 
-  $Filename lists the absolute pathway to fastq file, 
-  $SampleName is a name given to each fastq file and must be unique, 
-  $Factor is the experimental condition (i.e. STIM, baseline, day0, etc). 
-  <CMP> defines the comparisons you want to make - for example, DPI7-DPI0 will give differentially expressed genes at condition DPI7   
+  - $Filename lists the absolute pathway to fastq file, 
+  - $SampleName is a name given to each fastq file and must be unique, 
+  - $Factor is the experimental condition (i.e. STIM, baseline, day0, etc). 
+  - "<CMP>" defines the comparisons you want to make - for example, DPI7-DPI0 will give differentially expressed genes at condition DPI7   
   relative to DPI0
 
 To write/edit any of these files, use text editor nano 

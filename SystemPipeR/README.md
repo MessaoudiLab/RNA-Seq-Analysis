@@ -69,11 +69,19 @@ In addition to the data and results directories, you'll need the following files
 
 - ".Batchjobs.R" and "slurm.tmpl" are required for submitting jobs to the cluster. Copy these files exactly as it is written in the examples provided.
 
-- "tophat.param" is required for defining alignment parameters. Change the GTF and FASTA reference genome information in this file. Everything else will be the same
+- "tophat.param" is required for defining alignment parameters. Change the GTF and FASTA reference genome information in this file (line 8 and 14, respectively). Everything else will be the same
 
-- targets.file outlines the experimental design. See example as a guideline. $Filename lists the absolute pathway to fastq file, $SampleName is a name given to each fastq file and must be unique, $Factor is the experimental condition (i.e. STIM, baseline, day0, etc). <CMP> defines the comparisons you want to make - for example, DPI7-DPI0 will give differentially expressed genes at condition DPI7 relative to DPI0
+- targets.file outlines the experimental design. See example as a guideline. 
+  $Filename lists the absolute pathway to fastq file, 
+  $SampleName is a name given to each fastq file and must be unique, 
+  $Factor is the experimental condition (i.e. STIM, baseline, day0, etc). 
+  <CMP> defines the comparisons you want to make - for example, DPI7-DPI0 will give differentially expressed genes at condition DPI7   
+  relative to DPI0
 
-To write/edit any of these files, use text editor nano (i.e. nano targets.txt) 
+To write/edit any of these files, use text editor nano 
+```
+nano targets.txt
+```
 
 ## 2. FASTQC
 Run FASTQC on all fastq files. Information on how to run FASTQC can be found in the repository "NGS-Pre-Processing"

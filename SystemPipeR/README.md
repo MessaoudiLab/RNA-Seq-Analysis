@@ -25,7 +25,7 @@ get absolute path of present working directory
 ```
 pwd -P
 ```
-copy
+copy files
 ```
 cp "name_of_file" "location_where_you_want_to_copy_to"
 ```

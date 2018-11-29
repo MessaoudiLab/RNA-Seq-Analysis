@@ -19,7 +19,7 @@ wget {url}: download data from internet
 
 ## 1. Setup working directory for RNAseq
 - Open the Terminal and Login to UCR cluster
-- Make a main for the project
+- Make a main directory for the project
 ```
 mkdir “name of project”
 ```

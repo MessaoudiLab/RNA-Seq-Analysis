@@ -68,7 +68,7 @@ In addition to the data and results directories, you'll need the following files
 
 - "tophat.param" is required for defining alignment parameters. Change the GTF and FASTA reference genome information in this file (line 8 and 14, respectively). Everything else will be the same
 
-- targets.file outlines the experimental design. See example as a guideline. 
+- targets.txt outlines the experimental design. See example as a guideline. 
   - $Filename lists the absolute pathway to fastq file, 
   - $SampleName is a name given to each fastq file and must be unique, 
   - $Factor is the experimental condition (i.e. STIM, baseline, day0, etc). 
@@ -79,18 +79,25 @@ To write/edit any of these files, use text editor nano
 ```
 nano targets.txt
 ```
+## 2. Set up Data files
+FASTQ files
+-Move all fastq files to the data directory
 
-## 2. FASTQC
+Reference Genome
+- Information on how to obtain reference FASTA and GTF file can be found in the repository "Reference Genomes"
+- In the data directory, create symbolic link for the reference genome file, annotation file and index file. You should have 8 files: fasta, GTF, and 6 index files ending in .bt2 if using bowtie alignment.
+
+```
+ln -s {absolute/path/to/reference/genome/files} .
+```
+
+## 3. FASTQC
 Run FASTQC on all fastq files. Information on how to run FASTQC can be found in the repository "NGS-Pre-Processing"
 
-## 3. Trim files
+## 4. Trim files
 Based on FASTQC metrics, Trim fastq files using Trim galore. Information on how to run Trim galore can be found in repository "NGS-Pre-Processing"
 
-## 4. Alignment
-- In the data directory, create symbolic link for the reference genome file, annotation file and index file. You should have 8 files: fasta, GTF, and 6 index files ending in .bt2 if using bowtie alignment.
-```
-ln -s absolute/path/to/reference/genome/files .
-```
+## 5. Alignment
 
 - Start R in the main directory 
 - Load the required packages
@@ -121,7 +128,7 @@ sysargs(args[1])
 resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="20G") 
 ```
 - Submit the jobs to the cluster for alignment to take place
-- Change Njobs to actual number of sequences to be aligned
+- Change Njobs to actual number of sequences to be aligned (example shown is 18 jobs)
 ```
 reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01", resourceList=resources)
 ```
@@ -150,12 +157,12 @@ R
 library(systemPipeR)
 library(GenomicFeatures)
 ```
-- Read in targets file once again
+- Read in targets file  again
 ```
 targets <- read.delim("targets.txt", comment.char = "#")
 targets
 ```
-- Create an object
+- Create the args object again
 ```
 args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
 file.exists(outpaths(args))
@@ -165,12 +172,9 @@ file.exists(outpaths(args))
 read_statsDF <- alignStats(args=args)
 write.table(read_statsDF, file="results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 ```
-### 4. Counting and Normalization
-The .gtf file, .fa file, sqlite file and organism given down below are subject to change according to project. Include the appropriate files needed for your particular project.
-- Load the required packages
-```
-library(GenomicFeatures)
-```
+## 6. Counting and Normalization
+The .gtf file, .fa file, sqlite file and organism given down below are subject to change according to project. Include the appropriate files needed for your  project.
+
 - Create a txdb object
 ```
 txdb <- makeTxDbFromGFF(file="data/Macaca_mulatta.MMUL_1.78.gtf", format="gtf", dataSource="ENSEMBL", organism="Macaca mulatta")
@@ -184,22 +188,21 @@ eByg <- exonsBy(txdb, by=c("gene"))
 bfl <- BamFileList(outpaths(args), yieldSize=50000, index=character())
 multicoreParam <- MulticoreParam(workers=8); register(multicoreParam); registered()
 counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode="Union", ignore.strand=FALSE, inter.feature=TRUE, singleEnd=TRUE))
-countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
 ```
-- Wait until read counting is done, then run to make countDFeByg excel file
+- Wait until read counting is done, then write countDFeByg into an excel file
 ```
 countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
 rownames(countDFeByg) <- names(rowRanges(counteByg[[1]])); colnames(countDFeByg) <- names(outpaths(args))
 write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
 ```
-- Generates RPKM normalized expression values from the countDFeByg file
+- Generate RPKM normalized expression values from the countDFeByg file
 ```
 rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
 write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
 ```
 A counts file and RPKM normalized expression values are now generated and can be found in the "results" directory. These counts are normalized to remove biases introduced in the preparation steps such as length of the reads and sequencing depth (coverage) of a sample. During RPKM normalization, The total number of reads in a sample is divided by 1,000,000 (this is "per million" factor). Read counts are divided by this per million factor (normalizing for coverage giving you reads per millions). Then, these reads per million values are divided by the length of the gene in kilobases. Because RPKM normalization involves total number of reads in each sample (not just the counts of each individual reads), you might see RPKM values different between different samples/time points. This RPKM normalization step is done separately from EdgeR, which generates FC, p-value and FDR. EdgeR does its own normalization. 
 
-### 5. Correlation Analysis
+## 7. Correlation/clustering Analysis
 - The following computes the sample-wise Spearman correlation coefficients from the RPKM normalized expression values. 
 ```
 library(ape)
@@ -224,7 +227,7 @@ plot.phylo(as.phylo(hc), type="p", edge.col=4, edge.width=3, show.node.label=TRU
 dev.off()
 ```
 
-### 6. PCA Plots
+PCA Plots
 - Follow the commands down below to create group-wise and sample-wise PCA plots:
 ```
 rld <- rlog(dds)

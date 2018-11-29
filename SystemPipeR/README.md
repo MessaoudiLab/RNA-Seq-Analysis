@@ -50,9 +50,6 @@ download data from internet
 wget {url}
 ```
 
-
-
-
 ## 1. Setup working directory for RNAseq
 - Open the Terminal and Login to UCR cluster
 - Make a main directory for the project
@@ -75,7 +72,7 @@ In addition to the data and results directories, you'll need the following files
   - $Filename lists the absolute pathway to fastq file, 
   - $SampleName is a name given to each fastq file and must be unique, 
   - $Factor is the experimental condition (i.e. STIM, baseline, day0, etc). 
-  - "<CMP>" defines the comparisons you want to make - for example, DPI7-DPI0 will give differentially expressed genes at condition DPI7   
+  - "CMP" defines the comparisons you want to make - for example, DPI7-DPI0 will give differentially expressed genes at condition DPI7   
   relative to DPI0
 
 To write/edit any of these files, use text editor nano 

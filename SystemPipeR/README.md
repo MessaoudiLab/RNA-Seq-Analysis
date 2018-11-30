@@ -291,7 +291,7 @@ edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=
 Add descriptions to the edgeDF file
   - The output of edgeDF will give you statistical information for each gene which is identified by an ensembl ID. 
   - In order to annotate each ensembl ID with additional information (HGNC symbol, description, gene type, etc), use Biomart:     http://uswest.ensembl.org/biomart/martview/f63abf59cf05faef9ee3b9c3a175acf3
-  - In Biomart: 1) choose the species: 2) choose information you want HGNC symbols, description, gene types, etc; 3) download excel file and save the corresponding directory where reference genome is located.
+  - In Biomart: 1) choose the species: 2) choose information you want HGNC symbols, description, gene types, etc; 3) download excel file and save the corresponding directory where reference genome is located. See Cynomolgus_genes_5.0.94.txt as an example
   - in R, read in the annotation file and save as object "desc"
 ```
 desc <- read.delim("/bigdata/messaoudilab/abotr002/References/Rhesus_Macaque/Rhesus_annotations.xls", row.names=1)

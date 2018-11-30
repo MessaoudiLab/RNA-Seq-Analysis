@@ -207,6 +207,8 @@ Before running DEG analysis with edgeR, it's important to visualize the transcri
 
 The next sections go over generating  graphs of either tree clusters or PCAs.
 
+NOTE: The minimum required files you need to generate tree clusters or PCAs is the "targets.txt", "countDFeByg.xls", and "rpkmDFeByg.xls", which was generated in step 6.
+
 ### Sample-wise Spearman correlation using RPKM
 ```
 library(ape)
@@ -268,31 +270,65 @@ dev.off()
 ```
 
 ## 8. DEG Analysis with edgeR
-- Follow the commands down below to run DEG analysis:
+Load required libraries
 ```
 library(systemPipeR)
 library(edgeR)
+```
+Read in raw counts file and targets.txt file
+```
 countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE)
 targets <- read.delim("targets.txt", comment="#")
+```
+Define comparisons to be made
+```
 cmp <- readComp(file="targets.txt", format="matrix", delim="-")
+```
+Run edgeR
+```
 edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=TRUE, mdsplot="")
+```
+Add descriptions to the edgeDF file
+  - The output of edgeDF will give you statistical information for each gene which is identified by an ensembl ID. 
+  - In order to annotate each ensembl ID with additional information (HGNC symbol, description, gene type, etc), use Biomart:     http://uswest.ensembl.org/biomart/martview/f63abf59cf05faef9ee3b9c3a175acf3
+  - In Biomart: 1) choose the species: 2) choose information you want HGNC symbols, description, gene types, etc; 3) download excel file and save the corresponding directory where reference genome is located.
+  - in R, read in the annotation file and save as object "desc"
+```
 desc <- read.delim("/bigdata/messaoudilab/abotr002/References/Rhesus_Macaque/Rhesus_annotations.xls", row.names=1)
+```
+Bind annotation file to edgeDF file
+```
 edgeDF <- cbind(edgeDF, desc[rownames(edgeDF),])
+```
+Write annotated edgeDF file
+```
 write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
+```
+
+Obtain summary data
+```
 edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE)
 pdf("results/DEGcounts.pdf")
 DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=5))
 dev.off()
 write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
 ```
+## 9 Merge EdgeR file with RPKM file
 - Merge RPKM file (rpkmDFeByg.xls) and edgeR file (edgeRglm_allcomp.xls) (these files should be in the ‘results’ directory)
-- nano rpkmDFeByg.xls and write a header “ENSEMBL_ID” on top of ensembl column. (Header is subject to change depending on project)
+- nano rpkmDFeByg.xls and write a header “RhesusEnsembl” on top of ensembl column. (Header is subject to change depending on project)
+```
+nano rpkmDFeByg.xls
+```
 - nano edgeRglm_allcomp.xls and a header “RhesusEnsembl” on top of ensembl column. (Header is subject to change depending on project)
+```
+nano edgeRglm_allcomp.xls
+```
+
 - Make sure you are in the ‘results’ directory when running the following in R
-- Follow the commands down below to merge the data in the two files to create ‘edgeR_rpkm.xls’
+- Follow the example commands down below to merge the data in the two files to create ‘edgeR_rpkm.xls’
 ```
 edgeR <- read.delim("edgeRglm_allcomp.xls", sep="\t", header=TRUE)
 rpkm <- read.delim("rpkmDFeByg.xls", sep="\t", header=TRUE)
-edgeR_rpkm <- merge(edgeR, rpkm, by.x="RhesusEnsembl", by.y="ENSEMBL_ID", all=TRUE)
+edgeR_rpkm <- merge(edgeR, rpkm, by.x="RhesusEnsembl", by.y="RhesusEnsembl", all=TRUE)
 write.table(edgeR_rpkm, file="edgeR_rpkm.xls", sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
 ```

@@ -200,10 +200,14 @@ write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, quote=FALSE, s
 rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
 write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
 ```
-A counts file and RPKM normalized expression values are now generated and can be found in the "results" directory. These counts are normalized to remove biases introduced in the preparation steps such as length of the reads and sequencing depth (coverage) of a sample. During RPKM normalization, The total number of reads in a sample is divided by 1,000,000 (this is "per million" factor). Read counts are divided by this per million factor (normalizing for coverage giving you reads per millions). Then, these reads per million values are divided by the length of the gene in kilobases. Because RPKM normalization involves total number of reads in each sample (not just the counts of each individual reads), you might see RPKM values different between different samples/time points. This RPKM normalization step is done separately from EdgeR, which generates FC, p-value and FDR. EdgeR does its own normalization. 
+A counts file and RPKM normalized expression values are now generated and can be found in the "results" directory. These counts for each gene are normalized to account for differences in the library size of the sample as well as gene length. During RPKM normalization, The total number of reads in a sample is divided by 1,000,000 (this is the "per million" factor). Read counts are divided by this per million factor (normalizing for coverage giving you reads per millions). Then, these reads per million values are divided by the length of the gene in kilobases. This RPKM normalization step is done independently from EdgeR, which uses TMM for normalization. 
 
 ## 7. Correlation/clustering Analysis
-- The following computes the sample-wise Spearman correlation coefficients from the RPKM normalized expression values. 
+Before running DEG analysis with edgeR, it's important to visualize the transcriptional profiles of each sample in order to determine if any samples are outliers and need to be removed. Hierarchical clustering or PCA clustering will give you an indication of the magnitude of transcriptional changes following edgeR analysis. An outlier should be removed if the library size or alignment rate is poor (less than 10 million reads and less than 50% alignment)
+
+The next sections go over generating  graphs of either tree clusters or PCAs.
+
+### Sample-wise Spearman correlation using RPKM
 ```
 library(ape)
 rpkmDFeByg <- read.delim("./results/rpkmDFeByg.xls", row.names=1, check.names=FALSE)[,-19]
@@ -214,7 +218,8 @@ pdf("results/sample_tree.pdf")
 plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, no.margin=TRUE)
 dev.off()
 ```
-- The following computes the sample-wise Spearman correlation coefficients from the rlog (regularized-logarithm) transformed expression values generated with the DESeq2 package to make correlation dendrogram of samples for rlog values.
+### Sample-wise Spearman correlation using rlog transformed counts data
+The following computes the sample-wise Spearman correlation coefficients from the rlog (regularized-logarithm) transformed expression values generated with the DESeq2 package to make correlation dendrogram of samples for rlog values.
 ```
 library(DESeq2)
 countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
@@ -227,13 +232,15 @@ plot.phylo(as.phylo(hc), type="p", edge.col=4, edge.width=3, show.node.label=TRU
 dev.off()
 ```
 
-PCA Plots
-- Follow the commands down below to create group-wise and sample-wise PCA plots:
+### PCA Plot to create group-wise PCA plots using rlog normalized counts
 ```
 rld <- rlog(dds)
 pdf("results/PCA_group.pdf")
 plotPCA(rld)
 dev.off()
+```
+### PCA plot to create sample-wise PCA plots using rlog normalized counts
+```
 colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
 dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
 rld <- rlog(dds)
@@ -241,7 +248,7 @@ pdf("results/PCA_sample.pdf")
 plotPCA(rld)
 dev.off()
 ```
-- Follow the commands down below to create group-wise and sample-wise PCA plots based on vsd:
+### PCA Plot to create group-wise PCA plots using vsd normalized counts
 ```
 colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
 dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
@@ -249,6 +256,9 @@ vsd <- varianceStabilizingTransformation(dds)
 pdf("results/PCA_group_vsd.pdf")
 plotPCA(vsd)
 dev.off()
+```
+### PCA plot to create sample-wise PCA plots using vsd normalized counts
+```
 colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
 dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
 vsd <- varianceStabilizingTransformation(dds)
@@ -257,7 +267,7 @@ plotPCA(vsd)
 dev.off()
 ```
 
-### 7. DEG Analysis with edgeR
+## 8. DEG Analysis with edgeR
 - Follow the commands down below to run DEG analysis:
 ```
 library(systemPipeR)

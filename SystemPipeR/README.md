@@ -69,7 +69,7 @@ targets <- read.delim("targets.txt", comment.char = "#")
 targets
 ```
 
-- Create "args" object, which saves information from tophat.param and targets.txt in order to run alignment
+- Create "args" object, which saves information from tophat.param or hisat2.param and targets.txt in order to run alignment
 ```
 args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
 moduleload(modules(args))

@@ -36,10 +36,15 @@ FASTQ files
 
 Reference Genome
 - Information on how to obtain reference FASTA and GTF file can be found in the repository "Reference Genomes"
-- In the data directory, create symbolic link for the reference genome file, annotation file and index file. You should have 8 files: fasta, GTF, and 6 index files ending in .bt2 if using bowtie alignment.
+- In the data directory, create symbolic link for the reference genome file (FASTA), annotation file (GTF) and index files (ending in .bt2 for bowtie or .ht2 for hisat2 index).
 
 ```
-ln -s {absolute/path/to/reference/genome/files} .
+ln -s absolute/path/to/reference/genome/files .
+```
+
+example
+```
+ln -s ln -s /bigdata/messaoudilab/arivera/Reference_genomes/Cynomolgus_Macaque/Macaca_fascicularis.Macaca_fascicularis_5.0.94.gtf
 ```
 
 ## 3. FASTQC

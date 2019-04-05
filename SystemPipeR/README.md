@@ -16,7 +16,7 @@ In addition to the data and results directories, you'll need the following files
 
 - ".Batchjobs.R" and "slurm.tmpl" are required for submitting jobs to the cluster. Copy these files exactly as it is written in the examples provided.
 
-- "tophat.param" is required for defining alignment parameters. Change the GTF and FASTA reference genome information in this file (line 8 and 14, respectively). Everything else will be the same
+- "tophat.param" or "hisat2.param" is required for defining alignment parameters depending on whether you use tophat or hisat2 for alignment. Change the GTF and FASTA reference genome information in this file (line 8 and 14, respectively). Everything else will be the same
 
 - targets.txt outlines the experimental design. See example as a guideline. 
   - $Filename lists the absolute pathway to fastq file, 

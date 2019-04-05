@@ -27,6 +27,7 @@ In addition to the data and results directories, you'll need the following files
 
 To write/edit any of these files, use text editor nano 
 ```
+#example
 nano targets.txt
 ```
 ## 2. Set up Data files

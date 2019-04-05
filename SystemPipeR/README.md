@@ -158,6 +158,15 @@ write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep
 ```
 A counts file and RPKM normalized expression values are now generated and can be found in the "results" directory. These counts for each gene are normalized to account for differences in the library size of the sample as well as gene length. During RPKM normalization, The total number of reads in a sample is divided by 1,000,000 (this is the "per million" factor). Read counts are divided by this per million factor (normalizing for coverage giving you reads per millions). Then, these reads per million values are divided by the length of the gene in kilobases. This RPKM normalization step is done independently from EdgeR, which uses TMM for normalization. 
 
+## 6. Alternative counting (submit job)
+countReads.sh runs the countReads.R file
+
+```
+sbatch countReads.sh
+```
+NOTE: The txdb(sqlite) file are subject to change in the countReads.R file
+NOTE: Update the email and output file name in the countReads.sh
+
 ## 7. Correlation/clustering Analysis
 Before running DEG analysis with edgeR, it's important to visualize the transcriptional profiles of each sample in order to determine if any samples are outliers and need to be removed. Hierarchical clustering or PCA clustering will give you an indication of the magnitude of transcriptional changes following edgeR analysis. An outlier should be removed if the library size or alignment rate is poor (less than 10 million reads and less than 50% alignment)
 
@@ -192,6 +201,10 @@ dev.off()
 
 ### PCA Plot to create group-wise PCA plots using rlog normalized counts
 ```
+library(DESeq2)
+countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
+colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
 rld <- rlog(dds)
 pdf("results/PCA_group.pdf")
 plotPCA(rld)
@@ -199,6 +212,8 @@ dev.off()
 ```
 ### PCA plot to create sample-wise PCA plots using rlog normalized counts
 ```
+library(DESeq2)
+countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
 colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
 dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
 rld <- rlog(dds)
@@ -208,6 +223,8 @@ dev.off()
 ```
 ### PCA Plot to create group-wise PCA plots using vsd normalized counts
 ```
+library(DESeq2)
+countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
 colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
 dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
 vsd <- varianceStabilizingTransformation(dds)
@@ -217,6 +234,8 @@ dev.off()
 ```
 ### PCA plot to create sample-wise PCA plots using vsd normalized counts
 ```
+library(DESeq2)
+countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
 colData <- data.frame(row.names=targets$SampleName, condition=targets$SampleName)
 dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
 vsd <- varianceStabilizingTransformation(dds)

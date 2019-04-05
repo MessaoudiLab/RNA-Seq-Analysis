@@ -44,7 +44,7 @@ ln -s absolute/path/to/reference/genome/files .
 
 example
 ```
-ln -s ln -s /bigdata/messaoudilab/arivera/Reference_genomes/Cynomolgus_Macaque/Macaca_fascicularis.Macaca_fascicularis_5.0.94.gtf
+ln -s /bigdata/messaoudilab/arivera/Reference_genomes/Cynomolgus_Macaque/Macaca_fascicularis.Macaca_fascicularis_5.0.94.gtf
 ```
 
 ## 3. FASTQC

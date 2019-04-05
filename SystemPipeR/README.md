@@ -12,7 +12,7 @@ mkdir data
 mkdir results
 ```
 
-In addition to the data and results directories, you'll need the following files in the main directory: slurm.tmpl, .Batchjobs.R, tophat.param, and targets.txt (see examples)
+In addition to the data and results directories, you'll need the following files in the main directory: slurm.tmpl, .Batchjobs.R, tophat.param or hisat2.param, and targets.txt (see examples)
 
 - ".Batchjobs.R" and "slurm.tmpl" are required for submitting jobs to the cluster. Copy these files exactly as it is written in the examples provided.
 

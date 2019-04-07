@@ -82,3 +82,19 @@ Write excel file
 ```
 write.table(counts2, file="Counts_gene.xls", quote=FALSE, sep="\t")
 ```
+
+# Identify clusters and DEGs between clusters using Seurat
+## Run Seurat_clusters_DEGs.R line by line
+
+Will run QC metrics, tSNE clustering, identify differentially expressed genes between clusters, and assign cell type identities to clusters
+
+# Identify DEGs between stimulated/infected versus control
+## Run Seurat_stim_vs_control.R line by line
+
+Integrates 2 datasets to look at gene expression differences between conditions (i.e. stimulated versus control, or infected vs. uninfected)
+
+ - Aim to identify cell types that are present in both datasets
+ 
+ - Obtain cell type markers that are conserved in both control and stimulated cells
+ 
+ - Compare datasets to find cell-type specific responses to stimulation

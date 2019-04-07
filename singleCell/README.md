@@ -2,11 +2,11 @@
 # Trim
 Trim paired end reads with TrimGalore
 
-- Trim GalorePE.sh is an sbatch script that will run TrimGalore on multiple files using a for loop
+- Trim GalorePE.sh is an sbatch script that will run TrimGalore on multiple files
 
 - Make sure to cutomize TrimGalorePE.sh (i.e. output file name ".stdout", email, jobname, directory, file name, trimming parameters)
 
-- This script will submit the job into the cluster. All STDOUT will be redirected to a file called “my.stdout” as well as an email sent to the user when the status of the job changes.
+- This script will submit the job to be run in a subnode. All STDOUT will be redirected to a file called “my.stdout” as well as an email sent to the user when the status of the job changes.
 
 ```
 sbatch TrimGalorePE.sh

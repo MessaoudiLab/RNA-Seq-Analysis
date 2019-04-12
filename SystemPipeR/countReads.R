@@ -56,9 +56,9 @@ tpms <- apply(counts, 2, function(x) tpm(x, genelengths$Length))
 write.table(tpms, "./results/TPM.xls", quote=FALSE, sep="\t", col.names = NA)
               
 # You can check if TPM values are calculated correclty using               
-# 1) Because TPM is comparable across different samples, column sum for each TPM normalized sample should be equal value as other samples
+# 1) Because TPM is normalize across different samples, column sums are equal among samples (1e+06)
 colSums(tpms)
-# 2) Similarly, sample means should be equal               
+# 2) Similarly, sample means are equal among samples               
 colMeans(tpms)
 # 3) Generate normalized RPKM and compare to that generated with SystemPipeR              
 rpkm <- function(counts, lengths) {
@@ -66,5 +66,4 @@ rpkm <- function(counts, lengths) {
   rate / sum(counts) * 1e6
 }
 rpkms <- apply(counts, 2, function(x) rpkm(x, genelengths$Length))              
-write.table(rpkms, "./results/RPKM.xls", quote=FALSE, sep="\t", col.names = NA)                    
-                    
+write.table(rpkms, "./results/RPKM.xls", quote=FALSE, sep="\t", col.names = NA)

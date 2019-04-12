@@ -43,7 +43,7 @@ colnames(output) <- c("Length")
 write.table(output, file="./results/lengths.txt", sep="\t")
 genes <- read.delim("./results/lengths.txt", sep="\t", header=T)
 genes$Length <- genes$Length/1000
-# Table above gives you length of genes (exons) in kpb.                    
+# Table below gives you length of genes (exons) in kpb.                    
 write.table(genes, file="./results/lengths.txt", sep="\t")
 # Read the raw counts and gene lengths files, and TPM formula
 counts <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE)

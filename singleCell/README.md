@@ -83,6 +83,18 @@ Write excel file
 write.table(counts2, file="Counts_gene.xls", quote=FALSE, sep="\t")
 ```
 
+Edit/clean up excel file to look like the example counts file (counts.txt)
+
+```
+countDF <- read.table("counts.txt", sep="\t", header=TRUE)
+countDF2 <- countDF[,-1]
+names <- countDF$GENE
+rownames(countDF2)=make.names(names,unique=TRUE)
+write.table(countDF2, file="Counts_uniquegenes.xls", quote=FALSE, sep="\t")
+```
+
+
+
 # Identify clusters and DEGs between clusters using Seurat
 ## Run Seurat_clusters_DEGs.R line by line
 
@@ -98,3 +110,4 @@ Integrates 2 datasets to look at gene expression differences between conditions 
  - Obtain cell type markers that are conserved in both control and stimulated cells
  
  - Compare datasets to find cell-type specific responses to stimulation
+ 

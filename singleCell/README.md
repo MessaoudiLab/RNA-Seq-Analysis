@@ -90,7 +90,7 @@ countDF <- read.table("counts.txt", sep="\t", header=TRUE)
 countDF2 <- countDF[,-1]
 names <- countDF$GENE
 rownames(countDF2)=make.names(names,unique=TRUE)
-write.table(countDF2, file="Counts_uniquegenes.xls", quote=FALSE, sep="\t")
+write.table(countDF2, file="Counts_uniquegenes.xls", quote=FALSE, row.names=TRUE, col.names=TRUE, sep="\t")
 ```
 
 The final counts file (e.g. Counts_uniquegenes.xls) will be the input for Seurat analysis

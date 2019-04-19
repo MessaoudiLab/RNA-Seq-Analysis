@@ -11,7 +11,7 @@ stim.data <- read.table(file = "../data/immune_stimulated_expression_matrix.txt.
 
 ## Set up control object
 ## QC, normalize and find variable features
-ctrl <- CreateSeuratObject(counts = ctrl.data, project = "IMMUNE_CTRL", min.cells = 3)
+ctrl <- CreateSeuratObject(raw.data= ctrl.data, project = "IMMUNE_CTRL", min.cells = 3)
 ctrl$stim <- "CTRL"
 
 ctrl[["percent.mt"]] <- PercentageFeatureSet(object = ctrl, pattern = "^MT.")
@@ -37,7 +37,7 @@ ctrl <- ScaleData(object = ctrl, features = all.genes)
 
 ## Set up stimulated object
 ## QC, normalize and find variable features
-stim <- CreateSeuratObject(counts = stim.data, project = "IMMUNE_STIM", min.cells = 3)
+stim <- CreateSeuratObject(raw.data=stim.data, project = "IMMUNE_STIM", min.cells = 3)
 stim$stim <- "STIM"
 stim[["percent.mt"]] <- PercentageFeatureSet(object = stim, pattern = "^MT.")
 

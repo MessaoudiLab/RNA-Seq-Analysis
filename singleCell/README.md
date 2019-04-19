@@ -93,6 +93,7 @@ rownames(countDF2)=make.names(names,unique=TRUE)
 write.table(countDF2, file="Counts_uniquegenes.xls", quote=FALSE, sep="\t")
 ```
 
+The final counts file (e.g. Counts_uniquegenes.xls) will be the input for Seurat analysis
 
 
 # Identify clusters and DEGs between clusters using Seurat

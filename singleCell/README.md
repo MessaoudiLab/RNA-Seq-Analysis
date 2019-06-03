@@ -101,6 +101,8 @@ The final counts file (e.g. Counts_uniquegenes.xls) will be the input for Seurat
 
 Will run QC metrics, tSNE clustering, identify differentially expressed genes between clusters, and assign cell type identities to clusters
 
+Seurat_clusters_DEGs.R adapted from https://satijalab.org/seurat/v3.0/pbmc3k_tutorial.html
+
 # Identify DEGs between stimulated/infected versus control
 ## Run Seurat_stim_vs_control.R line by line
 
@@ -111,4 +113,6 @@ Integrates 2 datasets to look at gene expression differences between conditions 
  - Obtain cell type markers that are conserved in both control and stimulated cells
  
  - Compare datasets to find cell-type specific responses to stimulation
+ 
+ Seurat_stim_vs_control.R adapted from https://satijalab.org/seurat/v3.0/immune_alignment.html
  

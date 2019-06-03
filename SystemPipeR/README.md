@@ -1,6 +1,14 @@
 # RNA-Seq Analysis Protocol
+## 1. Download data
+Information on how to run FASTQC can be found in the directory "Pre-Processing"
 
-## 1. Setup working directory for RNAseq
+## 2. FASTQC
+Run FASTQC on all fastq files. Information on how to run FASTQC can be found in the directory "Pre-Processing"
+
+## 3. Trim files
+Based on FASTQC metrics, Trim fastq files using Trim galore. Information on how to run Trim galore can be found in directory "Pre-Processing"
+
+## 4. Setup working directory for RNAseq
 - Open the Terminal and Login to UCR cluster
 - Make a main directory for the project
 ```
@@ -30,7 +38,7 @@ To write/edit any of these files, use text editor nano
 #example
 nano targets.txt
 ```
-## 2. Set up Data files
+## 5. Set up Data files
 FASTQ files
 -Move all fastq files to the data directory
 
@@ -47,13 +55,7 @@ example
 ln -s /bigdata/messaoudilab/arivera/Reference_genomes/Cynomolgus_Macaque/Macaca_fascicularis.Macaca_fascicularis_5.0.94.gtf
 ```
 
-## 3. FASTQC
-Run FASTQC on all fastq files. Information on how to run FASTQC can be found in the repository "NGS-Pre-Processing"
-
-## 4. Trim files
-Based on FASTQC metrics, Trim fastq files using Trim galore. Information on how to run Trim galore can be found in repository "NGS-Pre-Processing"
-
-## 5. Alignment
+## 6. Alignment
 
 - Start R in the main directory 
 - Load the required packages
@@ -61,6 +63,10 @@ Based on FASTQC metrics, Trim fastq files using Trim galore. Information on how 
 R
 library(systemPipeR)
 library(GenomicFeatures)
+library(BiocParallel)
+library(ape)
+library(DESeq2)
+library(edgeR)
 ```
 
 - Read in the targets file and save it as object "targets"
@@ -108,10 +114,7 @@ srun -p highmem --mem=100g --time=24:00:00 --pty bash -l
 ```
 
 Start R in the main directory and Load the required packages again
-```
-R
-library(systemPipeR)
-library(GenomicFeatures)
+
 ```
 - Read in targets file  again
 ```
@@ -128,7 +131,7 @@ file.exists(outpaths(args))
 read_statsDF <- alignStats(args=args)
 write.table(read_statsDF, file="results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 ```
-## 6. Counting and Normalization
+## 7a. Counting and Normalization
 The .gtf file, .fa file, sqlite file and organism given down below are subject to change according to project. Include the appropriate files needed for your  project.
 
 - Create a txdb object
@@ -158,7 +161,7 @@ write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep
 ```
 A counts file and RPKM normalized expression values are now generated and can be found in the "results" directory. These counts for each gene are normalized to account for differences in the library size of the sample as well as gene length. During RPKM normalization, The total number of reads in a sample is divided by 1,000,000 (this is the "per million" factor). Read counts are divided by this per million factor (normalizing for coverage giving you reads per millions). Then, these reads per million values are divided by the length of the gene in kilobases. This RPKM normalization step is done independently from EdgeR, which uses TMM for normalization. 
 
-## 6. Alternative counting (submit job)
+## 7b. Alternative counting (submit job)
 countReads.sh runs the countReads.R file
 
 ```
@@ -167,7 +170,7 @@ sbatch countReads.sh
 NOTE: The txdb(sqlite) file are subject to change in the countReads.R file
 NOTE: Update the email and output file name in the countReads.sh
 
-## 7. Correlation/clustering Analysis
+## 8. Correlation/clustering Analysis
 Before running DEG analysis with edgeR, it's important to visualize the transcriptional profiles of each sample in order to determine if any samples are outliers and need to be removed. Hierarchical clustering or PCA clustering will give you an indication of the magnitude of transcriptional changes following edgeR analysis. An outlier should be removed if the library size or alignment rate is poor (less than 10 million reads and less than 50% alignment)
 
 The next sections go over generating  graphs of either tree clusters or PCAs.
@@ -244,7 +247,7 @@ plotPCA(vsd)
 dev.off()
 ```
 
-## 8. DEG Analysis with edgeR
+## 9. DEG Analysis with edgeR
 Load required libraries
 ```
 library(systemPipeR)
@@ -288,7 +291,7 @@ DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=5))
 dev.off()
 write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
 ```
-## 9 Merge EdgeR file with RPKM file
+## 10 Merge EdgeR file with RPKM file
 - Merge RPKM file (rpkmDFeByg.xls) and edgeR file (edgeRglm_allcomp.xls) (these files should be in the ‘results’ directory)
 - nano rpkmDFeByg.xls and write a header “RhesusEnsembl” on top of ensembl column. (Header is subject to change depending on project)
 ```

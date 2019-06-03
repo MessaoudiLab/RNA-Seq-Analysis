@@ -1,5 +1,5 @@
 # Downloading Data to Terminal
-Libraries are sequenced through the website http://illumina.bioinfo.ucr.edu/ht/
+Libraries are sequenced through the website  http://hts.igb.uci.edu/
 
 In the desired directory, create a download script (see example)
 ```

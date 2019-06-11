@@ -115,7 +115,6 @@ srun -p highmem --mem=100g --time=24:00:00 --pty bash -l
 
 Start R in the main directory and Load the required packages again
 
-```
 - Read in targets file  again
 ```
 targets <- read.delim("targets.txt", comment.char = "#")

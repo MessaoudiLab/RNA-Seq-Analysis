@@ -1,0 +1,14 @@
+library(systemPipeR)
+library(ggplot2)
+library(DESeq2)
+source("/bigdata/messaoudilab/abotr002/Scripts/deseq2_pca.R")
+targets <- read.delim("targets.txt", comment.char = "#")
+targets
+countDF <- as.matrix(read.table("countDFeByg.xls"))
+colData <- data.frame(row.names=targets$SampleName, condition=targets$Factor)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+vst <- vst(dds)
+pca(vst)
+#quit R, nano new text file and cp the ensembl IDs. Run the following: 
+awk '{print $1}' top_500.txt
+awk '{print $1}' top_500.txt > top_500_genes.txt

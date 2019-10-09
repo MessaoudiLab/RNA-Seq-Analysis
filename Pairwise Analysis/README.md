@@ -43,7 +43,7 @@ write.table(topTags(lrt, n=18134), file="Leans_Ecoli_pairwise_100719.xls", sep="
 leans_ecoli_deg <- as.data.frame(topTags(lrt, n=18134))
 ```
 
-# Merging Annotation File with leans_ecoli_deg Object
+# Merging Annotation File with Object
 ```
 annotations <- read.delim("hg38_annotations_100719.xls", sep="\t", header=T, row.names=1)
 head(annotations)

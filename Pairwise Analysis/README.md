@@ -1,3 +1,4 @@
+```
 library(edgeR)
 counts <- read.delim("countDFeByg_100719.xls", sep="\t", header=T)
 head(counts)
@@ -39,11 +40,14 @@ dev.off()
 topTags(lrt)
 nrow(lrt)
 write.table(topTags(lrt, n=18134), file="Leans_Ecoli_pairwise_100719.xls", sep="\t", quote=F)
-leans_ecoli_deg <- as.data.frame(topTags(lrt, n=18134)) 
+leans_ecoli_deg <- as.data.frame(topTags(lrt, n=18134))
+```
 
 # Merging Annotation File with leans_ecoli_deg Object
+```
 annotations <- read.delim("hg38_annotations_100719.xls", sep="\t", header=T, row.names=1)
 head(annotations)
 leans_ecoli_deg <- as.data.frame(leans_ecoli_deg)
 leans_ecoli_deg <- cbind(leans_ecoli_deg, annotations[rownames(leans_ecoli_deg),])
 write.table(leans_ecoli_deg, file="Leans_Ecoli_pairwise_annotated_100719.xls", sep="\t", quote=FALSE)
+```

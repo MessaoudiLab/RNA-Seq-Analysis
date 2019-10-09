@@ -1,3 +1,4 @@
+# Matched Pairs Analysis
 ```
 library(edgeR)
 counts <- read.delim("countDFeByg_100719.xls", sep="\t", header=T)

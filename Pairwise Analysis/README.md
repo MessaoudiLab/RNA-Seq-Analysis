@@ -12,9 +12,7 @@ head(keep)
 ecoli_filtered <- ecoli[keep,]
 nrow(ecoli)
 nrow(ecoli_filtered)
-y <- DGEList(ecoli)
-keep <- rowSums(cpm(y)>1) >= 4
-y <- y[keep,]
+y <- DGEList(ecoli_filtered)
 y$samples$lib.size <- colSums(y$counts)
 y <- calcNormFactors(y)
 pdf("Leans_Ecoli_MDS.pdf")

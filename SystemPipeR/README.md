@@ -57,6 +57,7 @@ ln -s /bigdata/messaoudilab/arivera/Reference_genomes/Cynomolgus_Macaque/Macaca_
 
 ## 6. Alignment
 
+- Warning: Until further notice, in order to use BatchJobs for the following script you need to load R/3.5.0 instead of the most recent version. To do this, simple run: **module load R/3.5.0** in the terminal before starting R. 
 - Start R in the main directory 
 - Load the required packages
 ```

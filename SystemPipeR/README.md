@@ -78,8 +78,8 @@ targets
 
 - Create "args" object, which saves information from tophat.param or hisat2.param and targets.txt in order to run alignment
 ```
-args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
-moduleload(modules(args))
+args <- systemArgs(sysma="tophat.param", mytargets="targets.txt") ## Make sure if you want to use HISAT2 or TOPHAT alignment tool
+moduleload (modules(args))
 ```
 - Check alignment script for the first sequence
 ```

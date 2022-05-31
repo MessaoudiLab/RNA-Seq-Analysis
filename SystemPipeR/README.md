@@ -146,7 +146,7 @@ txdb <- loadDb("./data/Macaca_mulatta.sqlite")
 eByg <- exonsBy(txdb, by=c("gene"))
 bfl <- BamFileList(outpaths(args), yieldSize=50000, index=character())
 multicoreParam <- MulticoreParam(workers=8); register(multicoreParam); registered()
-counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode="Union", ignore.strand=FALSE, inter.feature=TRUE, singleEnd=TRUE, preprocess.reads=invertStrand))
+counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode="Union", ignore.strand=FALSE, inter.feature=FALSE, singleEnd=FALSE, preprocess.reads=invertStrand))
 
 ```
 - Wait until read counting is done, then write countDFeByg into an excel file
